@@ -1,0 +1,197 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Method {
+  post
+  put
+  patch
+  delete
+  get
+}
+
+enum Level {
+  info
+  fatal
+  warning
+}
+
+model TrafficSource {
+  id            String               @id
+  name          String
+  trafficDomain String
+  userId        String
+  createdAt     DateTime
+  updatedAt     DateTime
+  domain        Domain[]
+  pathname      Pathname[]
+  httpTraffic   HttpTraffic[]
+  corePathname  CorePathname[]
+  exception     Exception[]
+  coreLog       CoreLog[]
+  webhook       Webhook[]
+  shares        TrafficSourceShare[]
+
+  @@index([userId])
+}
+
+enum WebhookType {
+  discord
+}
+
+model Webhook {
+  id              String        @id
+  type            WebhookType
+  level           Level
+  value           String
+  createdAt       DateTime
+  updatedAt       DateTime
+  trafficSourceId String
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+}
+
+enum SharePermission {
+  READ_ONLY
+}
+
+model TrafficSourceShare {
+  id              String          @id
+  ownerId         String
+  sharedWithId    String
+  trafficSourceId String
+  permission      SharePermission
+  createdAt       DateTime
+  updatedAt       DateTime
+  trafficSource   TrafficSource   @relation(fields: [trafficSourceId], references: [id])
+
+  @@unique([ownerId, sharedWithId, trafficSourceId])
+  @@index([sharedWithId, trafficSourceId])
+}
+
+enum Protocol {
+  http
+  https
+}
+
+model Domain {
+  id              String        @id
+  value           String
+  protocol        Protocol
+  trafficSourceId String
+  createdAt       DateTime
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+  pathname        Pathname[]
+  httpTraffic     HttpTraffic[]
+}
+
+model Pathname {
+  id              String        @id
+  value           String
+  trafficSourceId String
+  domainId        String
+  createdAt       DateTime
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+  domain          Domain        @relation(fields: [domainId], references: [id])
+  httpTraffic     HttpTraffic[]
+}
+
+model HttpTraffic {
+  id              String        @id
+  status          Int
+  method          Method
+  level           Level
+  trafficUserId   String?
+  trafficSourceId String
+  elapsedTime     Int
+  domainId        String
+  pathnameId      String
+  requestId       String        @unique
+  responseId      String        @unique
+  createdAt       DateTime
+  domain          Domain        @relation(fields: [domainId], references: [id])
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+  pathname        Pathname      @relation(fields: [pathnameId], references: [id])
+  request         Request       @relation(fields: [requestId], references: [id])
+  response        Response      @relation(fields: [responseId], references: [id])
+
+  @@index([createdAt, level, trafficSourceId, domainId, pathnameId, method, status])
+}
+
+model Request {
+  id          String       @id
+  headers     String
+  bodyPreview String?
+  bodyUrl     String?
+  queryParams String?
+  createdAt   DateTime
+  httpTraffic HttpTraffic?
+  coreLog     CoreLog?
+}
+
+model Response {
+  id          String       @id
+  headers     String
+  bodyPreview String?
+  bodyUrl     String?
+  createdAt   DateTime
+  httpTraffic HttpTraffic?
+  coreLog     CoreLog?
+}
+
+model CoreLog {
+  id              String        @id
+  status          Int
+  method          Method
+  level           Level
+  elapsedTime     Int
+  trafficUserId   String?
+  corePathnameId  String
+  trafficSourceId String
+  requestId       String        @unique
+  responseId      String        @unique
+  createdAt       DateTime
+  corePathname    CorePathname  @relation(fields: [corePathnameId], references: [id])
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+  request         Request       @relation(fields: [requestId], references: [id])
+  response        Response      @relation(fields: [responseId], references: [id])
+}
+
+model CorePathname {
+  id              String        @id
+  value           String
+  trafficSourceId String
+  createdAt       DateTime
+  trafficSource   TrafficSource @relation(fields: [trafficSourceId], references: [id])
+  exception       Exception[]
+  coreLog         CoreLog[]
+}
+
+model Exception {
+  id                  String                @id
+  hash                String                @unique
+  message             String
+  metadata            String
+  firstSeenAt         DateTime
+  lastSeenAt          DateTime
+  trafficSourceId     String
+  corePathnameId      String
+  createdAt           DateTime
+  updatedAt           DateTime
+  trafficSource       TrafficSource         @relation(fields: [trafficSourceId], references: [id])
+  corePathname        CorePathname          @relation(fields: [corePathnameId], references: [id])
+  exceptionOccurrence ExceptionOccurrence[]
+}
+
+model ExceptionOccurrence {
+  id          String    @id
+  exceptionId String
+  createdAt   DateTime
+  exception   Exception @relation(fields: [exceptionId], references: [id])
+}
