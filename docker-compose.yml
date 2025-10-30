@@ -37,7 +37,7 @@ services:
       - ingest-app-2
       - ingest-app-3
     volumes:
-      - ./nginx/ingest.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/balancer.conf:/etc/nginx/conf.d/default.conf:ro
     expose:
       - "8080"
     ports:
