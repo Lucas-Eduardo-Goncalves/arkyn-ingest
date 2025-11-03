@@ -4,6 +4,7 @@
   "type": "module",
   "license": "Apache-2.0",
   "author": "Arkyn | Lucas Gonçalves",
+  "description": "Log ingestion and routing API.",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "ccm": "./autocommit.sh",
