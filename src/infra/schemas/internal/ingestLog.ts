@@ -23,6 +23,7 @@ const ingestLogSchema = z.object({
     .string()
     .min(1, "Traffic source id is required")
     .uuid("Invalid traffic source id format"),
+  token: z.string().min(1, "Token is required"),
   status: z.number().int("Status must be an integer"),
   protocol: z.enum(["http", "https"]),
   method: z.enum(["get", "post", "put", "delete", "patch"]),

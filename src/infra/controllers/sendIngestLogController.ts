@@ -13,7 +13,7 @@ class SendIngestLogController {
       const { token } = await AuthMiddleware.authenticate(route);
       const schemaValidator = new SchemaValidatorAdapter(ingestLogSchema);
 
-      const data = schemaValidator.validate(route.request.body);
+      const data = schemaValidator.validate({ ...route.request.body, token });
       await this.sendIngestLogUseCase.execute(data, token);
 
       return route.response.json(null, 201);
