@@ -9,10 +9,7 @@ class AuthMiddleware {
     const bearerToken = route?.request?.headers?.authorization;
     if (!bearerToken) throw HttpAdapter.badRequest("No token provided");
 
-    const token = bearerToken.replace("Bearer ", "");
-
-    const jwtAdapter = new JwtAdapter();
-    const { userId } = await jwtAdapter.verify(token);
+    const { userId, token } = await JwtAdapter.verify(bearerToken);
 
     const schemaValidator = new SchemaValidatorAdapter(userIdSchema);
     schemaValidator.validate({ userId });

@@ -4,19 +4,17 @@ import { environmentVariables } from "../../main/config/environmentVariables";
 import { HttpAdapter } from "./httpAdapter";
 
 class JwtAdapter {
-  constructor() {}
-
-  async verify(rawToken: string) {
+  static async verify(bearerToken: string) {
     try {
       const secret = new TextEncoder().encode(environmentVariables.JWT_KEY);
-      const token = rawToken.replace("Bearer ", "");
+      const token = bearerToken.replace("Bearer ", "");
       const { payload } = await jwtVerify(token, secret);
       const userId = payload?.id;
 
       if (typeof userId !== "string") {
         throw HttpAdapter.unauthorized("Invalid token");
       }
-      return { userId };
+      return { userId, token };
     } catch (error) {
       throw HttpAdapter.unauthorized("Invalid token");
     }
