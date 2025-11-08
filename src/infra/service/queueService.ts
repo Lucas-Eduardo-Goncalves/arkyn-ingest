@@ -6,10 +6,7 @@ class QueueService {
 
   constructor() {
     const brokers = [environmentVariables.MICRO_QUEUE_IP];
-    console.log("Brokers:", brokers);
-
     const kafka = new Kafka({ brokers });
-
     this.producer = kafka.producer();
   }
 
@@ -19,11 +16,7 @@ class QueueService {
 
   async sendMessage(message: string) {
     const topic = "ingest-logs";
-
-    await this.producer.send({
-      topic: topic,
-      messages: [{ value: message }],
-    });
+    await this.producer.send({ topic: topic, messages: [{ value: message }] });
   }
 
   async disconnect() {

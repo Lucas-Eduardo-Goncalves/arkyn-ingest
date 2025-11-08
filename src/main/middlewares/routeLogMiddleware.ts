@@ -30,7 +30,9 @@ class RouteLogMiddleware {
   }
 
   private static formatDuration(ms: number): string {
-    if (ms < 1000) {
+    if (ms < 1) {
+      return `${(ms * 1000).toFixed(2)}µs`;
+    } else if (ms < 1000) {
       return `${ms.toFixed(2)}ms`;
     } else {
       return `${(ms / 1000).toFixed(2)}s`;

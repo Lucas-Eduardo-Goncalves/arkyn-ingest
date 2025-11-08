@@ -1,4 +1,3 @@
-import { UserGatewayDTO } from "../../domain/gateways/user";
 import { QueueService } from "../../infra/service/queueService";
 import { HttpMethod } from "../../main/types/httpMethod";
 
@@ -16,17 +15,13 @@ type InputProps = {
   responseHeaders: string;
   responseBody: string | null;
   elapsedTime: number;
+  token: string;
 };
 
-class SendIngestLogUseCase {
-  constructor(
-    private queueService: QueueService,
-    private userGateway: UserGatewayDTO
-  ) {}
+class EnqueueLogDataUseCase {
+  constructor(private queueService: QueueService) {}
 
-  async execute(input: InputProps, token: string) {
-    await this.userGateway.validateUserId(token);
-
+  async execute(input: InputProps) {
     await this.queueService.initialize();
     await this.queueService.sendMessage(JSON.stringify(input));
     await this.queueService.disconnect();
@@ -35,4 +30,4 @@ class SendIngestLogUseCase {
   }
 }
 
-export { SendIngestLogUseCase };
+export { EnqueueLogDataUseCase };

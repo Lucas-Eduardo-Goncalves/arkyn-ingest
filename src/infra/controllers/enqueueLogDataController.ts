@@ -1,12 +1,12 @@
-import { SendIngestLogUseCase } from "../../app/useCases/sendIngestLog";
+import { EnqueueLogDataUseCase } from "../../app/useCases/enqueueLogDataUseCase";
 import { AuthMiddleware } from "../../main/middlewares/authMiddleware";
 import { RouteDTO } from "../../main/types/routeDTO";
 import { ErrorHandlerAdapter } from "../adapters/errorHandlerAdapter";
 import { SchemaValidatorAdapter } from "../adapters/schemaValidatorAdapter";
 import { ingestLogSchema } from "../schemas/internal/ingestLog";
 
-class SendIngestLogController {
-  constructor(private sendIngestLogUseCase: SendIngestLogUseCase) {}
+class EnqueueLogDataController {
+  constructor(private enqueueLogDataUseCase: EnqueueLogDataUseCase) {}
 
   async handle(route: RouteDTO) {
     try {
@@ -14,13 +14,13 @@ class SendIngestLogController {
       const schemaValidator = new SchemaValidatorAdapter(ingestLogSchema);
 
       const data = schemaValidator.validate({ ...route.request.body, token });
-      await this.sendIngestLogUseCase.execute(data, token);
+      await this.enqueueLogDataUseCase.execute(data);
 
-      return route.response.json(null, 201);
+      return route.response.json(null, 200);
     } catch (error) {
       return ErrorHandlerAdapter.handle(error);
     }
   }
 }
 
-export { SendIngestLogController };
+export { EnqueueLogDataController };

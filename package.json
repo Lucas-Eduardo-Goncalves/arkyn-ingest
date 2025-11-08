@@ -9,17 +9,14 @@
     "dev": "bun run --hot src/index.ts",
     "ccm": "./autocommit.sh",
     "start": "bun run src/index.ts",
-    "test:all": "vitest --config vitest.config.ts",
-    "test:entities": "vitest --config vitest.config.ts src/app/entities/**/*.spec.ts",
-    "test:repositories": "vitest --config vitest.config.ts src/app/repositories/**/*.spec.ts",
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@arkyn/server": "^3.0.1-beta.72",
-    "@arkyn/shared": "^3.0.1-beta.72",
-    "@arkyn/templates": "^3.0.1-beta.72",
+    "@arkyn/server": "^3.0.1-beta.84",
+    "@arkyn/shared": "^3.0.1-beta.84",
+    "@arkyn/templates": "^3.0.1-beta.84",
     "@prisma/client": "5.22.0",
-    "hono": "^4.10.3",
+    "hono": "^4.10.4",
     "jose": "^6.1.0",
     "kafkajs": "^2.2.4",
     "redis": "^4.7.1",
@@ -29,7 +26,6 @@
     "@types/bun": "latest",
     "@types/redis": "^4.0.11",
     "prisma": "5.22.0",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.3"
   }
 }

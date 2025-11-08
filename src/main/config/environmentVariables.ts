@@ -12,13 +12,7 @@ const environmentVariablesSchema = z.object({
   JWT_KEY: z.string().min(1),
 
   // MICRO SERVICES
-  MICRO_AUTH_URL: z.string().url(),
   MICRO_QUEUE_IP: z.string().min(1),
-
-  // REDIS URL
-  REDIS_HOST: z.string().min(1),
-  REDIS_PASSWORD: z.string().min(1),
-  REDIS_PORT: z.string().min(1).transform(Number),
 
   // PORT
   PORT: z.string().min(4).regex(/^\d+$/).transform(Number),
