@@ -8,13 +8,12 @@ class EnvError extends Error {
 }
 
 const environmentVariablesSchema = z.object({
-  // JWT KEY
-  JWT_KEY: z.string().min(1),
-
-  // MICRO SERVICES
+  // Micro services
   MICRO_QUEUE_IP: z.string().min(1),
 
-  // PORT
+  // Config
+  JWT_KEY: z.string().min(1),
+  KAFKAJS_NO_PARTITIONER_WARNING: z.string().optional(),
   PORT: z.string().min(4).regex(/^\d+$/).transform(Number),
 });
 
